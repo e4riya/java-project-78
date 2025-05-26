@@ -1,6 +1,6 @@
 package hexlet.code;
 
-public class StringSchema {
+public class StringSchema extends BaseSchema<String> {
     private boolean isRequired;
     private boolean hasMinLength;
     private boolean hasMustContain;
@@ -23,7 +23,7 @@ public class StringSchema {
         hasMustContain = true;
         return this;
     }
-
+    @Override
     public boolean isValid(String value) {
         if (isRequired && !checkRequired(value)) {
             return false;
