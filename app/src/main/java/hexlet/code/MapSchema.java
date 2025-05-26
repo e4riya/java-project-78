@@ -10,7 +10,7 @@ public class MapSchema<L, R> extends BaseSchema<Map<L, R>> {
     private boolean hasShemas;
 
     public MapSchema shape(Map<L, BaseSchema<R>> newShemas) {
-        this.shemas = shemas;
+        this.shemas = newShemas;
         hasShemas = true;
         return this;
     }
