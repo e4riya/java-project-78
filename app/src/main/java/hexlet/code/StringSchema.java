@@ -5,15 +5,15 @@ public class StringSchema {
     private boolean hasMinLength;
     private boolean hasMustContain;
     private int minLength;
-    private String mustContain = "";
+    private String mustContain;
 
     public StringSchema required() {
         isRequired = true;
         return this;
     }
 
-    public StringSchema minLength(int minLength) {
-        this.minLength = minLength;
+    public StringSchema minLength(int length) {
+        minLength = length;
         hasMinLength = true;
         return this;
     }
