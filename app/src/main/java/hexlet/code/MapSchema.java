@@ -1,44 +1,43 @@
 package hexlet.code;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public class MapSchema<L, R> extends BaseSchema<Map<L, R>> {
-    private boolean isRequired;
-    private boolean hasSize;
-    private int size;
+    private final Map<String, Predicate<Map<L, R>>> predicates = new HashMap<>();
     private Map<L, BaseSchema<R>> shemas;
-    private boolean hasShemas;
 
     public MapSchema shape(Map<L, BaseSchema<R>> newShemas) {
         this.shemas = newShemas;
-        hasShemas = true;
+        predicates.put(
+            "shape", value -> {
+                for (Map.Entry<L, BaseSchema<R>> entry : shemas.entrySet()) {
+                    if (!entry.getValue().isValid(value.get(entry.getKey()))) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        );
         return this;
     }
 
     public MapSchema required() {
-        isRequired = true;
+        predicates.put("required", map -> map != null);
         return this;
     }
 
     public MapSchema sizeof(int expectedSize) {
-        this.size = expectedSize;
-        hasSize = true;
+        predicates.put("sizeof", map -> map != null && map.size() == expectedSize);
         return this;
     }
 
     @Override
     public boolean isValid(Map<L, R> value) {
-        if (isRequired && value == null) {
-            return false;
-        }
-        if (hasSize && (value == null || value.size() != size)) {
-            return false;
-        }
-        if (hasShemas) {
-            for (Map.Entry<L, BaseSchema<R>> entry : shemas.entrySet()) {
-                if (!entry.getValue().isValid(value.get(entry.getKey()))) {
-                    return false;
-                }
+        for (Predicate<Map<L, R>> predicate : predicates.values()) {
+            if (!predicate.test(value)) {
+                return false;
             }
         }
         return true;

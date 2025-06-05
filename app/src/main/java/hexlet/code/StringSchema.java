@@ -1,51 +1,34 @@
 package hexlet.code;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
+
 public class StringSchema extends BaseSchema<String> {
-    private boolean isRequired;
-    private boolean hasMinLength;
-    private boolean hasMustContain;
-    private int minLength;
-    private String mustContain;
+    private final Map<String, Predicate<String>> predicates = new HashMap<>();
 
     public StringSchema required() {
-        isRequired = true;
+        predicates.put("required", s -> s != null && !s.isEmpty());
         return this;
     }
 
     public StringSchema minLength(int length) {
-        minLength = length;
-        hasMinLength = true;
+        predicates.put("minLength", s -> s != null && s.length() >= length);
         return this;
     }
 
     public StringSchema contains(String value) {
-        mustContain = value;
-        hasMustContain = true;
+        predicates.put("contains", s -> s != null && s.contains(value));
         return this;
     }
+
     @Override
     public boolean isValid(String value) {
-        if (isRequired && !checkRequired(value)) {
-            return false;
-        }
-        if (hasMinLength && !checkMinLength(value)) {
-            return false;
-        }
-        if (hasMustContain && !checkMustContain(value)) {
-            return false;
+        for (Predicate<String> predicate : predicates.values()) {
+            if (!predicate.test(value)) {
+                return false;
+            }
         }
         return true;
-    }
-
-    private boolean checkRequired(String value) {
-        return value != null && !value.isEmpty();
-    }
-
-    private boolean checkMinLength(String value) {
-        return value != null && value.length() >= minLength;
-    }
-
-    private boolean checkMustContain(String value) {
-        return value != null && value.contains(mustContain);
     }
 }

@@ -1,52 +1,34 @@
 package hexlet.code;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
+
 public class NumberSchema extends BaseSchema<Integer> {
-    private boolean isRequired;
-    private boolean isPositive;
-    private boolean hasRange;
-    private int rangeMin;
-    private int rangeMax;
+    private final Map<String, Predicate<Integer>> predicates = new HashMap<>();
 
     public NumberSchema required() {
-        isRequired = true;
+        predicates.put("required", x -> x != null);
         return this;
     }
 
     public NumberSchema positive() {
-        isPositive = true;
+        predicates.put("positive", x -> x == null || x > 0);
         return this;
     }
 
     public NumberSchema range(int min, int max) {
-        hasRange = true;
-        rangeMin = min;
-        rangeMax = max;
+        predicates.put("range", x -> x != null && (x >= min && x <= max));
         return this;
     }
 
     @Override
     public boolean isValid(Integer value) {
-        if (isRequired && !checkRequired(value)) {
-            return false;
-        }
-        if (isPositive && !checkPositive(value)) {
-            return false;
-        }
-        if (hasRange && !checkRange(value)) {
-            return false;
+        for (Predicate<Integer> predicate : predicates.values()) {
+            if (!predicate.test(value)) {
+                return false;
+            }
         }
         return true;
-    }
-
-    private boolean checkRequired(Integer value) {
-        return value != null;
-    }
-
-    private boolean checkPositive(Integer value) {
-        return !checkRequired(value) || value > 0;
-    }
-
-    private boolean checkRange(Integer value) {
-        return checkRequired(value) && (value >= rangeMin && value <= rangeMax);
     }
 }
