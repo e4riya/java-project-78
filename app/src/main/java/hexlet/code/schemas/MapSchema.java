@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class MapSchema<L, R> extends BaseSchema<Map<L, R>> {
+public final class MapSchema<L, R> extends BaseSchema<Map<L, R>> {
     private final Map<String, Predicate<Map<L, R>>> predicates = new HashMap<>();
     private Map<L, BaseSchema<R>> shemas;
 
