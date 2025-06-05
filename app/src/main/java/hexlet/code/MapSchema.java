@@ -6,13 +6,13 @@ import java.util.function.Predicate;
 
 public class MapSchema<L, R> extends BaseSchema<Map<L, R>> {
     private final Map<String, Predicate<Map<L, R>>> predicates = new HashMap<>();
-    private Map<L, BaseSchema<R>> shemas;
+    private Map<L, BaseSchema<Object>> shemas;
 
-    public MapSchema shape(Map<L, BaseSchema<R>> newShemas) {
+    public MapSchema shape(Map<L, BaseSchema<Object>> newShemas) {
         this.shemas = newShemas;
         predicates.put(
             "shape", value -> {
-                for (Map.Entry<L, BaseSchema<R>> entry : shemas.entrySet()) {
+                for (Map.Entry<L, BaseSchema<Object>> entry : shemas.entrySet()) {
                     if (!entry.getValue().isValid(value.get(entry.getKey()))) {
                         return false;
                     }
