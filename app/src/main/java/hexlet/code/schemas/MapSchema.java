@@ -21,12 +21,12 @@ public final class MapSchema<L, R> extends BaseSchema<Map<L, R>> {
     }
 
     public MapSchema required() {
-        predicates.put("required", map -> map != null);
+        isRequired = true;
         return this;
     }
 
     public MapSchema sizeof(int expectedSize) {
-        predicates.put("sizeof", map -> map != null && map.size() == expectedSize);
+        predicates.put("sizeof", map -> map.size() == expectedSize);
         return this;
     }
 }

@@ -11,6 +11,8 @@ import java.util.function.Predicate;
  * @param <T> тип объекта, который необходимо валидировать
  */
 public abstract class BaseSchema<T> {
+    protected final Predicate<T> required = value -> value != null;
+    protected boolean isRequired;
     /**
      * Коллекция предикатов, используемых для валидации объекта.
      * Ключ - название правила, значение - само условие валидации.
@@ -24,12 +26,16 @@ public abstract class BaseSchema<T> {
      * @return {@code true}, если объект соответствует всем условиям,
      * {@code false} - если хотя бы одно условие не выполнено
      */
-    public final boolean isValid(T value) {
-        for (Predicate<T> predicate : predicates.values()) {
-            if (!predicate.test(value)) {
-                return false;
+    public boolean isValid(T value) {
+        if (required.test(value)) {
+            for (Predicate<T> predicate : predicates.values()) {
+                if (!predicate.test(value)) {
+                    return false;
+                }
             }
+            return true;
+        } else {
+            return !isRequired;
         }
-        return true;
     }
 }
