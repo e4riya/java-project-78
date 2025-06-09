@@ -1,11 +1,8 @@
 package hexlet.code.schemas;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Predicate;
 
 public final class MapSchema<L, R> extends BaseSchema<Map<L, R>> {
-    private final Map<String, Predicate<Map<L, R>>> predicates = new HashMap<>();
     private Map<L, BaseSchema<R>> shemas;
 
     public MapSchema shape(Map<L, BaseSchema<R>> newShemas) {
@@ -31,15 +28,5 @@ public final class MapSchema<L, R> extends BaseSchema<Map<L, R>> {
     public MapSchema sizeof(int expectedSize) {
         predicates.put("sizeof", map -> map != null && map.size() == expectedSize);
         return this;
-    }
-
-    @Override
-    public boolean isValid(Map<L, R> value) {
-        for (Predicate<Map<L, R>> predicate : predicates.values()) {
-            if (!predicate.test(value)) {
-                return false;
-            }
-        }
-        return true;
     }
 }
